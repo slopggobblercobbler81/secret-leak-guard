@@ -5,6 +5,8 @@
 [![Python: 3.8+](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/)
 [![SARIF: 2.1.0](https://img.shields.io/badge/SARIF-2.1.0-green.svg)](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning)
 [![Zero Dependency](https://img.shields.io/badge/dependencies-zero-brightgreen)](pyproject.toml)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://makeapullrequest.com)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 > **High-performance CLI regex & Shannon entropy scanner for accidental tokens, credentials, and API keys in git diffs, commits, and codebases.**
 
