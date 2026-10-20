@@ -1,0 +1,68 @@
+name: "Secret Leak Guard"
+description: "Scan git diffs and repositories for accidental API keys, tokens, and credentials with Shannon entropy validation."
+author: "slopggobblercobbler81"
+branding:
+  icon: "shield"
+  color: "red"
+
+inputs:
+  path:
+    description: "Path to file or directory to scan"
+    required: false
+    default: "."
+  scan-mode:
+    description: "Scan mode: 'repo' or 'diff'"
+    required: false
+    default: "diff"
+  severity:
+    description: "Minimum severity threshold: LOW, MEDIUM, HIGH, CRITICAL"
+    required: false
+    default: "LOW"
+  format:
+    description: "Output format: text, json, sarif, markdown"
+    required: false
+    default: "sarif"
+  output-file:
+    description: "Path to output report file"
+    required: false
+    default: "secret-leak-guard-report.sarif"
+  fail-on-findings:
+    description: "Fail the workflow if any secrets are detected"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install Secret Leak Guard
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install "${{ github.action_path }}"
+
+    - name: Run Secret Leak Guard
+      shell: bash
+      run: |
+        FAIL_FLAG="--fail-on-findings"
+        if [ "${{ inputs.fail-on-findings }}" != "true" ]; then
+          FAIL_FLAG="--no-fail"
+        fi
+
+        if [ "${{ inputs.scan-mode }}" = "diff" ]; then
+          secret-leak-guard diff \
+            --format "${{ inputs.format }}" \
+            --severity "${{ inputs.severity }}" \
+            --output "${{ inputs.output-file }}" \
+            $FAIL_FLAG
+        else
+          secret-leak-guard scan "${{ inputs.path }}" \
+            --format "${{ inputs.format }}" \
+            --severity "${{ inputs.severity }}" \
+            --output "${{ inputs.output-file }}" \
+            $FAIL_FLAG
+        fi
