@@ -213,3 +213,19 @@ All 41+ tests run locally with 100% pass rate.
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+
+
+## Advanced Regex Security Patterns Reference
+
+Secret Leak Guard utilizes a hybrid engine combining high-precision regular expressions with Shannon entropy analysis to detect secrets. Below is a detailed reference of custom regex patterns supported and performance tuning tips.
+
+### Supported Regex Patterns
+- **AWS Access Key IDs**: AKIA[0-9A-Z]{16}
+- **GitHub Personal Access Tokens**: ghp_[a-zA-Z0-9]{36}
+- **Slack API Tokens**: xox[baprs]-[0-9a-zA-Z]{10,48}
+- **Private RSA/SSH Keys: -----BEGIN (RSA|EC|DSA|OPENSSH) PRIVATE KEY-----
+
+### Performance Optimization Tips
+1. **Path Exclusion**: Exclude vendor directories and third-party build artifacts in pyproject.toml to reduce scanning overhead by up to 80%.
+2. **Entropy Thresholds**: Adjust Shannon entropy thresholds for custom rules to balance precision and recall, minimizing false positives on random hash strings.
+
