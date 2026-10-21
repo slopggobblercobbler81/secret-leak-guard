@@ -94,3 +94,17 @@ def test_database_uri_rule():
     match = rule.pattern.search(sample)
     assert match is not None
     assert match.group(1) == "super_secret_pass123"
+
+def test_shopify_and_linear_rules():
+    rules = {r.id: r for r in get_default_rules()}
+    # Shopify
+    shopify_rule = rules["SLG022"]
+    mock_shopify = "shp" + "at_" + "0123456789abcdef0123456789abcdef"
+    sample_shop = f"SHOPIFY_API_TOKEN='{mock_shopify}'"
+    assert shopify_rule.pattern.search(sample_shop)
+
+    # Linear
+    linear_rule = rules["SLG023"]
+    mock_linear = "lin_" + "api_" + "abcdefghijklmnopqrstuvwxyz0123456789ABCD"
+    sample_lin = f"LINEAR_API_KEY='{mock_linear}'"
+    assert linear_rule.pattern.search(sample_lin)
