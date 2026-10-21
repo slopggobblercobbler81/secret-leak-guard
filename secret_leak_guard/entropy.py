@@ -4,9 +4,8 @@ Entropy calculation and heuristics for secret detection.
 
 import math
 from collections import Counter
-from typing import Set
+from typing import List, Set
 
-# Known benign placeholders often found in templates, mocks, or documentation
 BENIGN_PLACEHOLDERS: Set[str] = {
     "your_api_key_here",
     "your_secret_key_here",
@@ -47,6 +46,35 @@ def calculate_entropy(data: str) -> float:
     return round(entropy, 4)
 
 
+def calculate_normalized_entropy(data: str) -> float:
+    """
+    Calculate the normalized Shannon entropy (metric entropy) of a string,
+    scaled between 0.0 and 1.0 relative to maximum theoretical entropy log2(len(data)).
+    Returns 0.0 for strings of length <= 1.
+    """
+    if not data or len(data) <= 1:
+        return 0.0
+    raw_entropy = calculate_entropy(data)
+    max_entropy = math.log2(len(data))
+    if max_entropy <= 0:
+        return 0.0
+    return round(min(1.0, raw_entropy / max_entropy), 4)
+
+
+def calculate_sliding_entropy(data: str, window_size: int = 16, step: int = 1) -> List[float]:
+    """
+    Calculate Shannon entropy across sliding windows of a given size.
+    Returns an empty list if data length is less than window_size or if window_size/step is non-positive.
+    """
+    if not data or len(data) < window_size or window_size <= 0 or step <= 0:
+        return []
+    results: List[float] = []
+    for i in range(0, len(data) - window_size + 1, step):
+        window = data[i : i + window_size]
+        results.append(calculate_entropy(window))
+    return results
+
+
 def get_character_diversity(data: str) -> int:
     """
     Counts how many distinct character classes are represented:
@@ -68,11 +96,9 @@ def is_repetitive(data: str) -> bool:
     """
     if len(data) < 4:
         return False
-    # If the most common character makes up > 60% of the string
     counts = Counter(data)
     if counts.most_common(1)[0][1] / len(data) > 0.6:
         return True
-    # If unique character count is very low compared to length
     if len(set(data)) <= 3 and len(data) >= 12:
         return True
     return False
@@ -95,18 +121,15 @@ def is_high_entropy(
     if len(cleaned) < min_length:
         return False
 
-    # Check benign placeholders
     lower_val = cleaned.lower()
     if lower_val in BENIGN_PLACEHOLDERS:
         return False
     if any(p in lower_val for p in ["your_token", "your_api", "insert_key", "replace_with"]):
         return False
 
-    # Filter out repetitive sequences
     if is_repetitive(cleaned):
         return False
 
-    # Filter out low diversity
     if get_character_diversity(cleaned) < min_diversity:
         return False
 

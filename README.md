@@ -125,6 +125,9 @@ secret-leak-guard rules
 | `SLG014` | **MEDIUM** | JSON Web Token (JWT) | 3-part signed JWT authentication tokens |
 | `SLG015` | **HIGH** | Database URI Password | Plaintext credentials embedded in Postgres, MySQL, MongoDB URLs |
 | `SLG016` | **HIGH** | Generic High-Entropy Secret | Assignments with high Shannon entropy ($H \ge 3.7$) |
+| `SLG017` | **CRITICAL** | PyPI API Token | Python package index upload tokens (`pypi-...`) |
+| `SLG018` | **CRITICAL** | npm Access Token | npm package registry automation/publish tokens (`npm_...`) |
+| `SLG019` | **HIGH** | Discord Bot Token | Discord bot authentication tokens |
 
 ---
 

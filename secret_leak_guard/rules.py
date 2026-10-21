@@ -13,10 +13,10 @@ class SecretRule:
     id: str
     name: str
     description: str
-    severity: str  # "CRITICAL", "HIGH", "MEDIUM", "LOW"
+    severity: str
     pattern: Pattern[str]
     min_entropy: float = 0.0
-    group_index: int = 0  # Which capture group contains the secret (0 = full match)
+    group_index: int = 0
     tags: List[str] = field(default_factory=list)
 
 
@@ -162,5 +162,29 @@ def get_default_rules() -> List[SecretRule]:
             group_index=1,
             min_entropy=3.7,
             tags=["generic", "entropy"],
+        ),
+        SecretRule(
+            id="SLG017",
+            name="PyPI API Token",
+            description="Detected a PyPI API upload token.",
+            severity="CRITICAL",
+            pattern=re.compile(r"\b(pypi-AgEIcHlwaS5vcmc[A-Za-z0-9\-_]{50,})\b"),
+            tags=["pypi", "python", "package", "token"],
+        ),
+        SecretRule(
+            id="SLG018",
+            name="npm Access Token",
+            description="Detected an npm automation or publish access token.",
+            severity="CRITICAL",
+            pattern=re.compile(r"\b(npm_[A-Za-z0-9]{36})\b"),
+            tags=["npm", "javascript", "package", "token"],
+        ),
+        SecretRule(
+            id="SLG019",
+            name="Discord Bot Token",
+            description="Detected a Discord bot token.",
+            severity="HIGH",
+            pattern=re.compile(r"\b([MN][A-Za-z0-9_-]{23,26}\.[A-Za-z0-9_-]{6}\.[A-Za-z0-9_-]{27,38})\b"),
+            tags=["discord", "chat", "token"],
         ),
     ]
