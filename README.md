@@ -232,3 +232,17 @@ Secret Leak Guard utilizes a hybrid engine combining high-precision regular expr
 1. **Path Exclusion**: Exclude vendor directories and third-party build artifacts in pyproject.toml to reduce scanning overhead by up to 80%.
 2. **Entropy Thresholds**: Adjust Shannon entropy thresholds for custom rules to balance precision and recall, minimizing false positives on random hash strings.
 
+---
+
+## 🧭 Companion Tools & Ecosystem Cross-References
+
+`secret-leak-guard` works seamlessly alongside leading security analyzers and CI/CD quality gates:
+
+- **Upstream Security Companions:**
+  - [`gitleaks/gitleaks`](https://github.com/gitleaks/gitleaks) — High-throughput git repository secret detector.
+  - [`trufflesecurity/trufflehog`](https://github.com/trufflesecurity/trufflehog) — Deep entropy and cryptographic secret verification engine.
+  - [`pre-commit/pre-commit`](https://github.com/pre-commit/pre-commit) — Framework for managing multi-language pre-commit hooks.
+- **Sibling Developer Guards:**
+  - [`repo-hygiene-cli`](https://github.com/slopggobblercobbler81/repo-hygiene-cli) — Audit git commit histories for accidental large binaries and missing `.gitignore` rules.
+  - [`env-guard-cli`](https://github.com/slopggobblercobbler81/env-guard-cli) — Validate `.env` files against schema definitions and audit unencrypted credentials.
+  - [`jwt-audit-sentinel`](https://github.com/slopggobblercobbler81/jwt-audit-sentinel) — Static analyzer detecting weak JWT algorithms and token vulnerabilities.
