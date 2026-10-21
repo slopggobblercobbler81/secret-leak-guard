@@ -2,6 +2,7 @@
 Unit tests for entropy functions.
 """
 
+import math
 import pytest
 from secret_leak_guard.entropy import (
     calculate_entropy,
@@ -27,7 +28,7 @@ def test_calculate_entropy_high():
     assert ent > 4.0
 
 
-def test_calculate_normalized_entropy():
+def test_calculate_normalized_entropy(monkeypatch):
     assert calculate_normalized_entropy("") == 0.0
     assert calculate_normalized_entropy("a") == 0.0
     assert calculate_normalized_entropy("aaaaaaa") == 0.0
@@ -36,6 +37,10 @@ def test_calculate_normalized_entropy():
     sample = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
     norm_ent = calculate_normalized_entropy(sample)
     assert 0.0 < norm_ent <= 1.0
+
+    # Test edge branch where max_entropy <= 0
+    monkeypatch.setattr(math, "log2", lambda x: 0.0)
+    assert calculate_normalized_entropy("abcdef") == 0.0
 
 
 def test_calculate_sliding_entropy():
@@ -62,6 +67,7 @@ def test_get_character_diversity():
 
 
 def test_is_repetitive():
+    assert is_repetitive("ab") is False
     assert is_repetitive("aaaaaaaaaaaaaaaa") is True
     assert is_repetitive("abababababababab") is True
     assert is_repetitive("K8d$zP9#mQ2!vL5*") is False
@@ -74,7 +80,9 @@ def test_is_high_entropy_true_positives():
 
 def test_is_high_entropy_false_positives():
     assert is_high_entropy("short") is False
+    assert is_high_entropy("   " + "a" * 10 + "   ", min_length=16) is False
     assert is_high_entropy("your_api_key_here") is False
+    assert is_high_entropy("your_token_1234567890abcdef") is False
     assert is_high_entropy("dummy_token") is False
     assert is_high_entropy("1111111111111111") is False
     assert is_high_entropy("abcdefghijklmnopqrst") is False

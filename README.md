@@ -128,6 +128,8 @@ secret-leak-guard rules
 | `SLG017` | **CRITICAL** | PyPI API Token | Python package index upload tokens (`pypi-...`) |
 | `SLG018` | **CRITICAL** | npm Access Token | npm package registry automation/publish tokens (`npm_...`) |
 | `SLG019` | **HIGH** | Discord Bot Token | Discord bot authentication tokens |
+| `SLG020` | **CRITICAL** | Solana Private Key | Detects base58 Solana private key assignments ($H \ge 4.0$) |
+| `SLG021` | **CRITICAL** | Base58 Private Key | Standalone raw high-entropy base58 87-88 char private keys ($H \ge 4.5$) |
 
 ---
 
@@ -209,7 +211,7 @@ Run the full unit test suite:
 pytest -v
 ```
 
-All 41+ tests run locally with 100% pass rate.
+All 62+ tests and performance benchmarks run locally with 100% pass rate.
 
 ---
 
@@ -226,9 +228,9 @@ Secret Leak Guard utilizes a hybrid engine combining high-precision regular expr
 - **AWS Access Key IDs**: AKIA[0-9A-Z]{16}
 - **GitHub Personal Access Tokens**: ghp_[a-zA-Z0-9]{36}
 - **Slack API Tokens**: xox[baprs]-[0-9a-zA-Z]{10,48}
-- **Private RSA/SSH Keys: -----BEGIN (RSA|EC|DSA|OPENSSH) PRIVATE KEY-----
+- **Private RSA/SSH Keys**: -----BEGIN (RSA|EC|DSA|OPENSSH) PRIVATE KEY-----
+- **Solana / Base58 Private Keys**: Base58 encoded 64-byte keypairs or 32-byte seeds ([1-9A-HJ-NP-Za-km-z])
 
 ### Performance Optimization Tips
 1. **Path Exclusion**: Exclude vendor directories and third-party build artifacts in pyproject.toml to reduce scanning overhead by up to 80%.
 2. **Entropy Thresholds**: Adjust Shannon entropy thresholds for custom rules to balance precision and recall, minimizing false positives on random hash strings.
-

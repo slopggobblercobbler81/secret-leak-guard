@@ -187,4 +187,25 @@ def get_default_rules() -> List[SecretRule]:
             pattern=re.compile(r"\b([MN][A-Za-z0-9_-]{23,26}\.[A-Za-z0-9_-]{6}\.[A-Za-z0-9_-]{27,38})\b"),
             tags=["discord", "chat", "token"],
         ),
+        SecretRule(
+            id="SLG020",
+            name="Solana Private Key",
+            description="Detected a base58-encoded Solana private key assignment.",
+            severity="CRITICAL",
+            pattern=re.compile(
+                r"(?i)(?:solana[_\-]?private[_\-]?key|solana[_\-]?secret[_\-]?key|solana[_\-]?key|sol[_\-]?privkey|sol[_\-]?private[_\-]?key|phantom[_\-]?key)\s*[:=]\s*['\"]?([1-9A-HJ-NP-Za-km-z]{43,88})['\"]?"
+            ),
+            group_index=1,
+            min_entropy=4.0,
+            tags=["solana", "crypto", "blockchain", "private-key", "base58"],
+        ),
+        SecretRule(
+            id="SLG021",
+            name="High-Entropy Base58 Private Key",
+            description="Detected an unlabelled raw high-entropy Base58 private key or keypair.",
+            severity="CRITICAL",
+            pattern=re.compile(r"\b([1-9A-HJ-NP-Za-km-z]{87,88})\b"),
+            min_entropy=4.5,
+            tags=["base58", "solana", "crypto", "private-key"],
+        ),
     ]
