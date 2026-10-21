@@ -208,4 +208,20 @@ def get_default_rules() -> List[SecretRule]:
             min_entropy=4.5,
             tags=["base58", "solana", "crypto", "private-key"],
         ),
+        SecretRule(
+            id="SLG022",
+            name="Shopify Access Token",
+            description="Detected a Shopify admin, user, or partner API access token.",
+            severity="CRITICAL",
+            pattern=re.compile(r"\b(shp(?:at|ua|pa)_[a-fA-F0-9]{32})\b"),
+            tags=["shopify", "ecommerce", "api", "token"],
+        ),
+        SecretRule(
+            id="SLG023",
+            name="Linear API Key",
+            description="Detected a Linear personal or workspace API key.",
+            severity="HIGH",
+            pattern=re.compile(r"\b(lin_api_[A-Za-z0-9]{40})\b"),
+            tags=["linear", "api", "key", "issue-tracker"],
+        ),
     ]
