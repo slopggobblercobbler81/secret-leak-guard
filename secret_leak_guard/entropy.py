@@ -26,6 +26,9 @@ BENIGN_PLACEHOLDERS: Set[str] = {
     "0000000000000000",
 }
 
+BASE58_ALPHABET: str = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+BASE58_CHARSET: Set[str] = set(BASE58_ALPHABET)
+
 
 def calculate_entropy(data: str) -> float:
     """
@@ -73,6 +76,27 @@ def calculate_sliding_entropy(data: str, window_size: int = 16, step: int = 1) -
         window = data[i : i + window_size]
         results.append(calculate_entropy(window))
     return results
+
+
+def is_base58(data: str) -> bool:
+    """
+    Check if a string consists exclusively of valid Base58 characters
+    (Bitcoin/IPFS/Solana alphabet: no 0, O, I, or l).
+    Returns False for empty strings or strings with invalid characters.
+    """
+    if not data:
+        return False
+    return set(data).issubset(BASE58_CHARSET)
+
+
+def calculate_base58_entropy(data: str) -> float:
+    """
+    Calculate Shannon entropy of a Base58 string.
+    Returns 0.0 if data is empty or contains non-Base58 characters.
+    """
+    if not data or not is_base58(data):
+        return 0.0
+    return calculate_entropy(data)
 
 
 def get_character_diversity(data: str) -> int:
@@ -135,3 +159,29 @@ def is_high_entropy(
 
     ent = calculate_entropy(cleaned)
     return ent >= threshold
+
+
+def is_high_entropy_base58(
+    data: str,
+    threshold: float = 4.0,
+    min_length: int = 32,
+) -> bool:
+    """
+    Determines if candidate string exhibits high entropy consistent with Base58 / Solana private keys.
+    Checks Base58 alphabet validity, minimum length, non-repetitiveness,
+    and Shannon entropy threshold.
+    """
+    if not data or len(data) < min_length:
+        return False
+
+    cleaned = data.strip().strip("'\"`")
+    if len(cleaned) < min_length:
+        return False
+
+    if not is_base58(cleaned):
+        return False
+
+    if is_repetitive(cleaned):
+        return False
+
+    return calculate_entropy(cleaned) >= threshold
